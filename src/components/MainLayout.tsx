@@ -9,7 +9,8 @@ import {
   LayoutDashboard,
   Menu,
   X,
-  BellRing
+  BellRing,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -66,6 +67,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     { path: "/", icon: LayoutDashboard, label: "Ana Sayfa" },
     { path: "/items", icon: ListChecks, label: "Öğeler" },
     { path: "/add", icon: PlusCircle, label: "Yeni Ekle" },
+    { path: "/emergency-phones", icon: Phone, label: "Acil Telefonlar" },
     { path: "/settings", icon: Settings, label: "Ayarlar" },
   ];
 

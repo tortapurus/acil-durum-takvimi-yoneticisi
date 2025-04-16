@@ -12,6 +12,7 @@ import ItemDetail from "./pages/ItemDetail";
 import AddEditItem from "./pages/AddEditItem";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import EmergencyPhones from "./pages/EmergencyPhones";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/items/:id" element={<ItemDetail />} />
               <Route path="/items/:id/edit" element={<AddEditItem />} />
               <Route path="/add" element={<AddEditItem />} />
+              <Route path="/emergency-phones" element={<EmergencyPhones />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
