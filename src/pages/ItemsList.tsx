@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useItems } from "@/context/ItemContext";
@@ -15,8 +14,8 @@ const ItemsList: React.FC = () => {
   const location = useLocation();
   const { items, getItemStatus } = useItems();
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Parse category from URL query param
   const queryParams = new URLSearchParams(location.search);
@@ -37,15 +36,11 @@ const ItemsList: React.FC = () => {
         .includes(searchQuery.toLowerCase());
 
       // Filter by category
-      const matchesCategory = categoryFilter
-        ? item.category === categoryFilter
-        : true;
+      const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
 
       // Filter by status
       const itemStatus = getItemStatus(item);
-      const matchesStatus = statusFilter
-        ? itemStatus === statusFilter
-        : true;
+      const matchesStatus = statusFilter === "all" || itemStatus === statusFilter;
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -92,7 +87,7 @@ const ItemsList: React.FC = () => {
             <SelectValue placeholder="Tüm kategoriler" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tüm kategoriler</SelectItem>
+            <SelectItem value="all">Tüm kategoriler</SelectItem>
             {categoryOptions.map(option => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -108,7 +103,7 @@ const ItemsList: React.FC = () => {
             <SelectValue placeholder="Tüm durumlar" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tüm durumlar</SelectItem>
+            <SelectItem value="all">Tüm durumlar</SelectItem>
             <SelectItem value="safe">Güvenli</SelectItem>
             <SelectItem value="warning">Yaklaşıyor</SelectItem>
             <SelectItem value="danger">Süresi Dolmuş</SelectItem>
@@ -128,8 +123,8 @@ const ItemsList: React.FC = () => {
               variant="outline" 
               onClick={() => {
                 setSearchQuery("");
-                setCategoryFilter("");
-                setStatusFilter("");
+                setCategoryFilter("all");
+                setStatusFilter("all");
               }}
             >
               Filtreleri Temizle
