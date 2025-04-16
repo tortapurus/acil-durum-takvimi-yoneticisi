@@ -27,6 +27,7 @@ export interface CategorySummary {
   category: Category;
   totalItems: number;
   expiringSoon: number;
+  expired: number;
 }
 
 export interface AppSettings {

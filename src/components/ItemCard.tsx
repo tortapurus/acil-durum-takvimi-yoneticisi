@@ -19,15 +19,16 @@ export const ItemCard: React.FC<ItemCardProps> = ({ item, onClick }) => {
   const daysRemaining = differenceInDays(item.expirationDate, new Date());
   const CategoryIcon = getCategoryIcon(item.category);
 
+  // Define background color based on status
+  const getCardColorClass = () => {
+    if (status === 'danger') return 'border-l-status-danger bg-status-danger/5';
+    if (status === 'warning') return 'border-l-status-warning bg-status-warning/5';
+    return 'border-l-status-safe bg-status-safe/5';
+  };
+
   return (
     <Card 
-      className={`hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 ${
-        status === 'danger' 
-          ? 'border-l-status-danger' 
-          : status === 'warning' 
-            ? 'border-l-status-warning' 
-            : 'border-l-status-safe'
-      }`}
+      className={`hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 ${getCardColorClass()}`}
       onClick={onClick}
     >
       <CardContent className="p-4">

@@ -157,14 +157,22 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     return categories.map(category => {
       const categoryItems = items.filter(item => item.category === category);
-      const expiringSoon = categoryItems.filter(
-        item => getItemStatus(item) !== "safe"
-      ).length;
+      
+      const expiringSoon = categoryItems.filter(item => {
+        const status = getItemStatus(item);
+        const daysUntilExpiration = differenceInDays(item.expirationDate, new Date());
+        return status === "warning" && daysUntilExpiration >= 0;
+      }).length;
+      
+      const expired = categoryItems.filter(item => {
+        return getItemStatus(item) === "danger";
+      }).length;
       
       return {
         category,
         totalItems: categoryItems.length,
         expiringSoon,
+        expired,
       };
     }).filter(summary => summary.totalItems > 0); // Only include categories with items
   };

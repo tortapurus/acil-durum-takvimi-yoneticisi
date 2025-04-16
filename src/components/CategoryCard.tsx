@@ -11,12 +11,19 @@ interface CategoryCardProps {
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({ summary, onClick }) => {
   const Icon = getCategoryIcon(summary.category);
+  
+  // Determine background color class based on status
+  const getCardColorClass = () => {
+    if (summary.expired > 0) return "border-l-status-danger bg-status-danger/5";
+    if (summary.expiringSoon > 0) return "border-l-status-warning bg-status-warning/5";
+    return "border-l-status-safe bg-status-safe/5";
+  };
 
   return (
     <Card 
       className={`
-        hover:shadow-md transition-all duration-200 cursor-pointer
-        ${summary.expiringSoon > 0 ? 'border-status-warning' : ''}
+        hover:shadow-md transition-all duration-200 cursor-pointer border-l-4
+        ${getCardColorClass()}
       `}
       onClick={onClick}
     >
@@ -34,6 +41,11 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ summary, onClick }) 
           {summary.expiringSoon > 0 && (
             <div className="text-sm text-status-warning font-medium">
               Son kullanma yaklaşıyor: {summary.expiringSoon}
+            </div>
+          )}
+          {summary.expired > 0 && (
+            <div className="text-sm text-status-danger font-medium">
+              Süresi dolmuş: {summary.expired}
             </div>
           )}
         </div>

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Pencil, Trash2, CalendarClock, Bell, FileText } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, CalendarClock, Bell, FileText, Clock, Tag } from "lucide-react";
 import { getCategoryLabel, getCategoryIcon } from "@/utils/categoryUtils";
 
 const ItemDetail: React.FC = () => {
@@ -42,6 +42,12 @@ const ItemDetail: React.FC = () => {
     deleteItem(item.id);
     navigate("/items");
   };
+
+  const getStatusClass = () => {
+    if (status === 'danger') return 'bg-status-danger/5 border-l-status-danger';
+    if (status === 'warning') return 'bg-status-warning/5 border-l-status-warning';
+    return 'bg-status-safe/5 border-l-status-safe';
+  };
   
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -71,7 +77,7 @@ const ItemDetail: React.FC = () => {
         </span>
       </div>
       
-      <Card>
+      <Card className={`border-l-4 ${getStatusClass()}`}>
         <CardContent className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
             <div className="flex items-center gap-2">
@@ -98,6 +104,16 @@ const ItemDetail: React.FC = () => {
                 <p className="text-sm text-muted-foreground">Hatırlatma Başlangıç Tarihi</p>
                 <p className="font-medium">
                   {format(item.reminderDate, "d MMMM yyyy", { locale: tr })}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <p className="text-sm text-muted-foreground">Ekleme Tarihi</p>
+                <p className="font-medium">
+                  {format(item.createdAt, "d MMMM yyyy", { locale: tr })}
                 </p>
               </div>
             </div>
