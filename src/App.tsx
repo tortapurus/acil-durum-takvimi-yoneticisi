@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ItemProvider } from "./context/ItemContext";
 import { MainLayout } from "./components/MainLayout";
 import Dashboard from "./pages/Dashboard";
-import ItemsList from "./pages/ItemsList";
+import ItemsPage from "./pages/items";
 import ItemDetail from "./pages/ItemDetail";
 import AddEditItem from "./pages/AddEditItem";
 import Settings from "./pages/Settings";
@@ -26,7 +26,7 @@ const App = () => (
           <MainLayout>
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/items" element={<ItemsList />} />
+              <Route path="/items" element={<ItemsPage />} />
               <Route path="/items/:id" element={<ItemDetail />} />
               <Route path="/items/:id/edit" element={<AddEditItem />} />
               <Route path="/add" element={<AddEditItem />} />
