@@ -10,7 +10,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Pencil, Trash2, CalendarClock, Bell, FileText, Clock, Tag } from "lucide-react";
-import { getCategoryLabel, getCategoryIcon } from "@/utils/categoryUtils";
+import { getCategoryLabel, getCategoryIcon, getCategoryIconStyle } from "@/utils/categoryUtils";
 
 const ItemDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +37,7 @@ const ItemDetail: React.FC = () => {
   const status = getItemStatus(item);
   const daysRemaining = differenceInDays(item.expirationDate, new Date());
   const CategoryIcon = getCategoryIcon(item.category);
+  const iconStyle = getCategoryIconStyle(item.category);
   
   const handleDelete = () => {
     deleteItem(item.id);
@@ -81,7 +82,12 @@ const ItemDetail: React.FC = () => {
         <CardContent className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
             <div className="flex items-center gap-2">
-              <CategoryIcon className="h-5 w-5 text-muted-foreground" />
+              <div className="relative">
+                <div className="absolute inset-0 blur-sm opacity-30">
+                  <CategoryIcon className={`h-5 w-5 ${iconStyle}`} />
+                </div>
+                <CategoryIcon className={`h-5 w-5 ${iconStyle} relative z-10`} />
+              </div>
               <div>
                 <p className="text-sm text-muted-foreground">Kategori</p>
                 <p className="font-medium">{getCategoryLabel(item.category)}</p>
@@ -132,11 +138,13 @@ const ItemDetail: React.FC = () => {
           {item.imageUrl && (
             <div className="mt-4">
               <p className="text-sm text-muted-foreground mb-2">Görsel</p>
-              <img 
-                src={item.imageUrl} 
-                alt={item.name} 
-                className="rounded-md max-h-64 object-contain"
-              />
+              <div className="border rounded-lg overflow-hidden bg-white">
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.name} 
+                  className="mx-auto max-h-72 object-contain shadow-sm"
+                />
+              </div>
             </div>
           )}
         </CardContent>

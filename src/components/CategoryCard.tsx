@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CategorySummary } from "@/types";
-import { getCategoryLabel, getCategoryIcon } from "@/utils/categoryUtils";
+import { getCategoryLabel, getCategoryIcon, getCategoryIconStyle } from "@/utils/categoryUtils";
 
 interface CategoryCardProps {
   summary: CategorySummary;
@@ -11,6 +11,7 @@ interface CategoryCardProps {
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({ summary, onClick }) => {
   const Icon = getCategoryIcon(summary.category);
+  const iconStyle = getCategoryIconStyle(summary.category);
   
   // Determine background color class based on status
   const getCardColorClass = () => {
@@ -29,7 +30,12 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ summary, onClick }) 
     >
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Icon className="h-5 w-5" />
+          <div className="relative">
+            <div className="absolute inset-0 blur-sm opacity-30">
+              <Icon className={`h-5 w-5 ${iconStyle}`} />
+            </div>
+            <Icon className={`h-5 w-5 ${iconStyle} relative z-10`} />
+          </div>
           {getCategoryLabel(summary.category)}
         </CardTitle>
       </CardHeader>

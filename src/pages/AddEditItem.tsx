@@ -12,10 +12,11 @@ import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, ArrowLeft, Trash2 } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Upload, X } from "lucide-react";
 import { getCategoryOptions } from "@/utils/categoryUtils";
 import { Category } from "@/types";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 const AddEditItem: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +31,8 @@ const AddEditItem: React.FC = () => {
   const [notes, setNotes] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [nameError, setNameError] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
   
   const categoryOptions = getCategoryOptions();
 
@@ -43,6 +46,9 @@ const AddEditItem: React.FC = () => {
         setReminderDate(item.reminderDate);
         setNotes(item.notes || "");
         setImageUrl(item.imageUrl || "");
+        if (item.imageUrl) {
+          setPreviewUrl(item.imageUrl);
+        }
       } else {
         // Item not found, redirect to items list
         navigate("/items");
@@ -59,6 +65,32 @@ const AddEditItem: React.FC = () => {
     }
   }, [id, isEditMode, getItemById, navigate]);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error("Görsel 5MB'dan küçük olmalıdır");
+        return;
+      }
+      
+      setSelectedImage(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setPreviewUrl(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setPreviewUrl("");
+    setImageUrl("");
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -68,6 +100,12 @@ const AddEditItem: React.FC = () => {
       return;
     }
     
+    // Create image URL from file if selected
+    let finalImageUrl = imageUrl;
+    if (selectedImage && previewUrl) {
+      finalImageUrl = previewUrl;
+    }
+    
     if (isEditMode && id) {
       updateItem(id, {
         name,
@@ -75,7 +113,7 @@ const AddEditItem: React.FC = () => {
         expirationDate,
         reminderDate,
         notes: notes || undefined,
-        imageUrl: imageUrl || undefined,
+        imageUrl: finalImageUrl || undefined,
       });
     } else {
       addItem({
@@ -84,7 +122,7 @@ const AddEditItem: React.FC = () => {
         expirationDate,
         reminderDate,
         notes: notes || undefined,
-        imageUrl: imageUrl || undefined,
+        imageUrl: finalImageUrl || undefined,
       });
     }
     
@@ -237,13 +275,62 @@ const AddEditItem: React.FC = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Görsel URL (isteğe bağlı)</Label>
-            <Input
-              id="imageUrl"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="Görsel URL'si"
-            />
+            <Label htmlFor="image">Fotoğraf</Label>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => document.getElementById('imageUpload')?.click()}
+                  className="flex gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Fotoğraf Yükle
+                </Button>
+                <input
+                  id="imageUpload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                {(previewUrl || imageUrl) && (
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={clearImage}
+                    size="sm"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Görseli Kaldır
+                  </Button>
+                )}
+              </div>
+              
+              {previewUrl && (
+                <div className="relative mt-2 border rounded-md overflow-hidden" style={{ maxWidth: "300px" }}>
+                  <img 
+                    src={previewUrl} 
+                    alt="Önizleme" 
+                    className="w-full h-auto object-contain max-h-48"
+                  />
+                </div>
+              )}
+              
+              {!previewUrl && imageUrl && (
+                <div className="relative mt-2 border rounded-md overflow-hidden" style={{ maxWidth: "300px" }}>
+                  <img 
+                    src={imageUrl} 
+                    alt="Mevcut görsel" 
+                    className="w-full h-auto object-contain max-h-48"
+                  />
+                </div>
+              )}
+              
+              <p className="text-xs text-muted-foreground">
+                En fazla 5MB. Önerilen boyut: 800x600 piksel.
+              </p>
+            </div>
           </div>
         </div>
         
