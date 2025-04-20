@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +97,12 @@
   .status-danger {
     @apply text-status-danger border-status-danger bg-status-danger/10;
   }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  class: "dark";
 }

@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Item, Category, ItemStatus, CategorySummary, AppSettings } from "../types";
+import { Item, Category, ItemStatus, CategorySummary, AppSettings, CustomCategory } from "../types";
 import { differenceInDays } from "date-fns";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
@@ -10,6 +9,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   warningThreshold: 30, // 30 days
   reminderDays: 7, // 7 days
   notificationsEnabled: true,
+  customCategories: [],
 };
 
 // Mock data for initial loading
@@ -56,6 +56,8 @@ interface ItemContextType {
   getCategorySummaries: () => CategorySummary[];
   getItemStatus: (item: Item) => ItemStatus;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
+  addCustomCategory: (category: Omit<CustomCategory, "id">) => void;
+  deleteCustomCategory: (categoryId: string) => void;
 }
 
 const ItemContext = createContext<ItemContextType | undefined>(undefined);
@@ -182,6 +184,27 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast.success("Ayarlar başarıyla güncellendi.");
   };
 
+  const addCustomCategory = (category: Omit<CustomCategory, "id">) => {
+    const newCategory = {
+      ...category,
+      id: uuidv4(),
+    };
+    
+    setSettings(prev => ({
+      ...prev,
+      customCategories: [...prev.customCategories, newCategory]
+    }));
+    toast.success("Yeni kategori eklendi");
+  };
+
+  const deleteCustomCategory = (categoryId: string) => {
+    setSettings(prev => ({
+      ...prev,
+      customCategories: prev.customCategories.filter(cat => cat.id !== categoryId)
+    }));
+    toast.success("Kategori silindi");
+  };
+
   return (
     <ItemContext.Provider
       value={{
@@ -194,6 +217,8 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getCategorySummaries,
         getItemStatus,
         updateSettings,
+        addCustomCategory,
+        deleteCustomCategory,
       }}
     >
       {children}

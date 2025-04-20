@@ -1,14 +1,22 @@
-
 export interface Item {
   id: string;
   name: string;
-  category: Category;
+  category: string;
+  location?: string;
   expirationDate: Date;
   reminderDate: Date;
   notes?: string;
   imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Updated to store custom categories
+export interface CustomCategory {
+  id: string;
+  value: string;
+  label: string;
+  icon: string;
 }
 
 export type Category = 
@@ -30,8 +38,10 @@ export interface CategorySummary {
   expired: number;
 }
 
+// Update AppSettings to include custom categories
 export interface AppSettings {
-  warningThreshold: number; // Days before expiration to show warning status
-  reminderDays: number; // Days before expiration to start reminders
+  warningThreshold: number;
+  reminderDays: number;
   notificationsEnabled: boolean;
+  customCategories: CustomCategory[];
 }

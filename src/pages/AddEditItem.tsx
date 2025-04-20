@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useItems } from "@/context/ItemContext";
@@ -33,6 +32,7 @@ const AddEditItem: React.FC = () => {
   const [nameError, setNameError] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [location, setLocation] = useState("");
   
   const categoryOptions = getCategoryOptions();
 
@@ -49,18 +49,17 @@ const AddEditItem: React.FC = () => {
         if (item.imageUrl) {
           setPreviewUrl(item.imageUrl);
         }
+        setLocation(item.location || "");
       } else {
-        // Item not found, redirect to items list
         navigate("/items");
       }
     } else {
-      // In create mode, set reminder date to a week before expiration by default
       const defaultExpiry = new Date();
-      defaultExpiry.setMonth(defaultExpiry.getMonth() + 3); // Default 3 months expiry
+      defaultExpiry.setMonth(defaultExpiry.getMonth() + 3);
       setExpirationDate(defaultExpiry);
       
       const defaultReminder = new Date(defaultExpiry);
-      defaultReminder.setDate(defaultReminder.getDate() - 7); // Default 7 days before
+      defaultReminder.setDate(defaultReminder.getDate() - 7);
       setReminderDate(defaultReminder);
     }
   }, [id, isEditMode, getItemById, navigate]);
@@ -68,14 +67,13 @@ const AddEditItem: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 5 * 1024 * 1024) {
         toast.error("Görsel 5MB'dan küçük olmalıdır");
         return;
       }
       
       setSelectedImage(file);
       
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -94,13 +92,11 @@ const AddEditItem: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate
     if (!name.trim()) {
       setNameError("Öğe adı gereklidir");
       return;
     }
     
-    // Create image URL from file if selected
     let finalImageUrl = imageUrl;
     if (selectedImage && previewUrl) {
       finalImageUrl = previewUrl;
@@ -112,6 +108,7 @@ const AddEditItem: React.FC = () => {
         category,
         expirationDate,
         reminderDate,
+        location: location || undefined,
         notes: notes || undefined,
         imageUrl: finalImageUrl || undefined,
       });
@@ -121,6 +118,7 @@ const AddEditItem: React.FC = () => {
         category,
         expirationDate,
         reminderDate,
+        location: location || undefined,
         notes: notes || undefined,
         imageUrl: finalImageUrl || undefined,
       });
@@ -331,6 +329,16 @@ const AddEditItem: React.FC = () => {
                 En fazla 5MB. Önerilen boyut: 800x600 piksel.
               </p>
             </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="location">Konum</Label>
+            <Input
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Öğenin konumunu girin"
+            />
           </div>
         </div>
         

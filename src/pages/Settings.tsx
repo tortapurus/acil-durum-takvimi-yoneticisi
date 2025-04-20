@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useItems } from "@/context/ItemContext";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { Bell, AlertTriangle, Save, Moon, Sun } from "lucide-react";
 import { toast } from "sonner";
 
 const Settings: React.FC = () => {
-  const { settings, updateSettings } = useItems();
+  const { settings, updateSettings, addCustomCategory, deleteCustomCategory } = useItems();
   
   const [warningThreshold, setWarningThreshold] = useState(settings.warningThreshold.toString());
   const [reminderDays, setReminderDays] = useState(settings.reminderDays.toString());
@@ -19,6 +18,9 @@ const Settings: React.FC = () => {
   
   const [warningThresholdError, setWarningThresholdError] = useState("");
   const [reminderDaysError, setReminderDaysError] = useState("");
+  
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryIcon, setNewCategoryIcon] = useState("folder");
   
   const handleSave = () => {
     // Validate inputs
@@ -45,6 +47,22 @@ const Settings: React.FC = () => {
     });
   };
   
+  const handleAddCategory = () => {
+    if (!newCategoryName.trim()) {
+      toast.error("Kategori adı gereklidir");
+      return;
+    }
+    
+    addCustomCategory({
+      value: newCategoryName.toLowerCase().replace(/\s+/g, '-'),
+      label: newCategoryName,
+      icon: newCategoryIcon
+    });
+    
+    setNewCategoryName("");
+    setNewCategoryIcon("folder");
+  };
+  
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       <div>
@@ -55,8 +73,9 @@ const Settings: React.FC = () => {
       </div>
       
       <Tabs defaultValue="notifications">
-        <TabsList className="grid grid-cols-2">
+        <TabsList className="grid grid-cols-3">
           <TabsTrigger value="notifications">Bildirimler</TabsTrigger>
+          <TabsTrigger value="categories">Kategoriler</TabsTrigger>
           <TabsTrigger value="appearance">Görünüm</TabsTrigger>
         </TabsList>
         
@@ -137,6 +156,44 @@ const Settings: React.FC = () => {
                 <p className="text-sm text-muted-foreground">
                   Son kullanma tarihinden kaç gün önce bildirimlerin başlayacağı
                 </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="categories" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Kategori Yönetimi</CardTitle>
+              <CardDescription>
+                Özel kategoriler ekleyin ve yönetin
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Yeni kategori adı"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                />
+                <Button onClick={handleAddCategory}>
+                  Ekle
+                </Button>
+              </div>
+              
+              <div className="space-y-2">
+                {settings.customCategories.map((category) => (
+                  <div key={category.id} className="flex items-center justify-between p-2 border rounded-md">
+                    <span>{category.label}</span>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => deleteCustomCategory(category.id)}
+                    >
+                      Sil
+                    </Button>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
