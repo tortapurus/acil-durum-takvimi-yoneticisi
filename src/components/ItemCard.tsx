@@ -18,6 +18,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({ item, onClick }) => {
   const { getItemStatus } = useItems();
   const status = getItemStatus(item);
   const daysRemaining = differenceInDays(item.expirationDate, new Date());
+  // No type issues here since getCategoryIcon and getCategoryIconStyle now accept string
   const CategoryIcon = getCategoryIcon(item.category);
   const iconStyle = getCategoryIconStyle(item.category);
 

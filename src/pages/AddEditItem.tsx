@@ -13,18 +13,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CalendarIcon, ArrowLeft, Trash2, Upload, X } from "lucide-react";
 import { getCategoryOptions } from "@/utils/categoryUtils";
-import { Category } from "@/types";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 const AddEditItem: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getItemById, addItem, updateItem, deleteItem } = useItems();
+  const { getItemById, addItem, updateItem, deleteItem, settings } = useItems();
   const isEditMode = Boolean(id);
   
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<Category>("food");
+  const [category, setCategory] = useState<string>("food");
   const [expirationDate, setExpirationDate] = useState<Date>(new Date());
   const [reminderDate, setReminderDate] = useState<Date>(new Date());
   const [notes, setNotes] = useState("");
@@ -34,8 +33,13 @@ const AddEditItem: React.FC = () => {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [location, setLocation] = useState("");
   
-  const categoryOptions = getCategoryOptions();
-
+  const baseCategories = getCategoryOptions();
+  const customCategories = settings.customCategories || [];
+  const allCategories = [
+    ...baseCategories,
+    ...customCategories.map(c => ({ value: c.value, label: c.label }))
+  ];
+  
   useEffect(() => {
     if (isEditMode && id) {
       const item = getItemById(id);
@@ -176,13 +180,13 @@ const AddEditItem: React.FC = () => {
             </Label>
             <Select 
               value={category} 
-              onValueChange={(value) => setCategory(value as Category)}
+              onValueChange={(value) => setCategory(value)}
             >
               <SelectTrigger id="category">
                 <SelectValue placeholder="Kategori seçin" />
               </SelectTrigger>
               <SelectContent>
-                {categoryOptions.map(option => (
+                {allCategories.map(option => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>

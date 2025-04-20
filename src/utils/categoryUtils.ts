@@ -1,8 +1,9 @@
 
-import { Category } from "../types";
+import { Category, CustomCategory } from "../types";
 import { ShieldPlus, Droplets, Sandwich, FileText, Wrench, Phone, Shirt, Package } from "lucide-react";
 
-export const getCategoryLabel = (category: Category): string => {
+// Updated to accept string instead of just Category enum
+export const getCategoryLabel = (category: string): string => {
   const labels: Record<Category, string> = {
     food: "Gıda",
     water: "Su",
@@ -14,11 +15,18 @@ export const getCategoryLabel = (category: Category): string => {
     other: "Diğer",
   };
 
-  return labels[category];
+  // Check if it's a standard category
+  if (category in labels) {
+    return labels[category as Category];
+  }
+  
+  // For custom categories return the category itself as a fallback
+  return category;
 };
 
-export const getCategoryIcon = (category: Category) => {
-  const icons = {
+// Updated to accept string instead of just Category enum
+export const getCategoryIcon = (category: string) => {
+  const icons: Record<Category, any> = {
     food: Sandwich,
     water: Droplets,
     medical: ShieldPlus,
@@ -29,7 +37,8 @@ export const getCategoryIcon = (category: Category) => {
     other: Package,
   };
 
-  return icons[category];
+  // Return the icon if it exists, otherwise return the default "other" icon
+  return category in icons ? icons[category as Category] : Package;
 };
 
 export const getCategoryOptions = () => {
@@ -45,8 +54,8 @@ export const getCategoryOptions = () => {
   ];
 };
 
-// 3D Icon style classes to enhance the category icons
-export const getCategoryIconStyle = (category: Category) => {
+// Updated to accept string instead of just Category enum
+export const getCategoryIconStyle = (category: string) => {
   const baseClasses = "transform transition-all duration-300"; 
   
   const styles: Record<Category, string> = {
@@ -60,5 +69,6 @@ export const getCategoryIconStyle = (category: Category) => {
     other: `${baseClasses} text-emerald-500 hover:text-emerald-600 hover:scale-110`,
   };
 
-  return styles[category];
+  // Return the style if it exists, otherwise return a default style
+  return category in styles ? styles[category as Category] : styles.other;
 };

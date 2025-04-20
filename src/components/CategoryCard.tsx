@@ -10,6 +10,7 @@ interface CategoryCardProps {
 }
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({ summary, onClick }) => {
+  // No type issues here since getCategoryIcon and getCategoryIconStyle now accept string
   const Icon = getCategoryIcon(summary.category);
   const iconStyle = getCategoryIconStyle(summary.category);
   
