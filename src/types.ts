@@ -1,7 +1,8 @@
+
 export interface Item {
   id: string;
   name: string;
-  category: string;
+  category: string; // Changed from Category type to string to allow custom categories
   location?: string;
   expirationDate: Date;
   reminderDate: Date;
@@ -32,7 +33,7 @@ export type Category =
 export type ItemStatus = "safe" | "warning" | "danger";
 
 export interface CategorySummary {
-  category: Category;
+  category: string; // Changed from Category to string to allow custom categories
   totalItems: number;
   expiringSoon: number;
   expired: number;

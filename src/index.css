@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -99,10 +100,11 @@
   }
 }
 
+/* Always prefer dark mode */
 :root {
   color-scheme: dark;
 }
 
 html {
-  class: "dark";
+  @apply dark;
 }

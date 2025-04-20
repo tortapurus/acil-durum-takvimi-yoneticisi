@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useItems } from "@/context/ItemContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,11 @@ const Settings: React.FC = () => {
   
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryIcon, setNewCategoryIcon] = useState("folder");
+
+  // Set dark mode by default
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+  }, []);
   
   const handleSave = () => {
     // Validate inputs
@@ -182,18 +188,22 @@ const Settings: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                {settings.customCategories.map((category) => (
-                  <div key={category.id} className="flex items-center justify-between p-2 border rounded-md">
-                    <span>{category.label}</span>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deleteCustomCategory(category.id)}
-                    >
-                      Sil
-                    </Button>
-                  </div>
-                ))}
+                {settings.customCategories && settings.customCategories.length > 0 ? (
+                  settings.customCategories.map((category) => (
+                    <div key={category.id} className="flex items-center justify-between p-2 border rounded-md">
+                      <span>{category.label}</span>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteCustomCategory(category.id)}
+                      >
+                        Sil
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground">Henüz özel kategori eklenmemiş</p>
+                )}
               </div>
             </CardContent>
           </Card>

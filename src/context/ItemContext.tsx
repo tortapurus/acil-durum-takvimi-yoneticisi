@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Item, Category, ItemStatus, CategorySummary, AppSettings, CustomCategory } from "../types";
 import { differenceInDays } from "date-fns";
@@ -152,10 +153,8 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getCategorySummaries = (): CategorySummary[] => {
-    const categories: Category[] = [
-      "food", "water", "medical", "documents", 
-      "tools", "communication", "clothing", "other"
-    ];
+    // Get unique categories from items
+    const categories = [...new Set(items.map(item => item.category))];
     
     return categories.map(category => {
       const categoryItems = items.filter(item => item.category === category);
@@ -176,7 +175,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
         expiringSoon,
         expired,
       };
-    }).filter(summary => summary.totalItems > 0); // Only include categories with items
+    });
   };
 
   const updateSettings = (newSettings: Partial<AppSettings>) => {
@@ -192,7 +191,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     setSettings(prev => ({
       ...prev,
-      customCategories: [...prev.customCategories, newCategory]
+      customCategories: [...(prev.customCategories || []), newCategory]
     }));
     toast.success("Yeni kategori eklendi");
   };
@@ -200,7 +199,7 @@ export const ItemProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteCustomCategory = (categoryId: string) => {
     setSettings(prev => ({
       ...prev,
-      customCategories: prev.customCategories.filter(cat => cat.id !== categoryId)
+      customCategories: (prev.customCategories || []).filter(cat => cat.id !== categoryId)
     }));
     toast.success("Kategori silindi");
   };
